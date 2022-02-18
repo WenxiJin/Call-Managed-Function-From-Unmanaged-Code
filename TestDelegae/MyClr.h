@@ -1,8 +1,10 @@
 #pragma once
+#include <vcclr.h>
 using namespace System;
 using namespace System::Runtime::InteropServices;
 #include "../MyUnmanaged/MyUnmanaged.h"
 
+#pragma managed
 namespace MYCLR
 {
   // declare a delegate
@@ -12,16 +14,22 @@ namespace MYCLR
   public ref class MyClr
   {
   public:
-    MyClr() {
-      _pMyUnmanaged = new MyUnmanaged();
+    MyClr(MyClrDel^ myClrDel) {
+      _pMyUnmanaged = new MY_UNMANAGED::MyUnmanaged();
+      _cb = static_cast<CB>(Marshal::GetFunctionPointerForDelegate(myClrDel).ToPointer());
+
     };
-    int MyClrAdd(MyClrDel^ myClrDel, int n, int m)
+    int MyClrAdd(int n, int m)
     {
-      CB cb = static_cast<CB>(Marshal::GetFunctionPointerForDelegate(myClrDel).ToPointer());
-      return _pMyUnmanaged->MyAdd(cb, n, m);
+      return _pMyUnmanaged->MyAdd(_cb, n, m);
+    }
+    void MyClrLongFunc()
+    {
+      _pMyUnmanaged->MyLongFunc(_cb);
     }
   private:
-    class MyUnmanaged* _pMyUnmanaged;
+    class MY_UNMANAGED::MyUnmanaged* _pMyUnmanaged;
+    CB _cb;
   };
 }
 

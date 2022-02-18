@@ -1,20 +1,25 @@
 #pragma once
+#pragma unmanaged
 
 typedef int(__stdcall* CB)(int, int);
 
-class MyUnmanaged
+namespace MY_UNMANAGED
 {
-public:
-  int MyAdd(CB fp, int n, int m)
+  class MyUnmanaged
   {
-    _cb = fp;
-    if (_cb)
+  public:
+    int MyAdd(CB fp, int n, int m)
     {
-      return _cb(n, m);
+      _cb = fp;
+      if (_cb)
+      {
+        return _cb(n, m);
+      }
+      return -1;
     }
-    return -1;
-  }
-private:
-  CB _cb;
-};
 
+    void MyLongFunc(CB fp);
+  private:
+    CB _cb;
+  };
+}
